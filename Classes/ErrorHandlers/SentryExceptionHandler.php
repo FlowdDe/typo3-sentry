@@ -25,6 +25,8 @@ namespace DmitryDulepov\Sentry\ErrorHandlers;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
+use TYPO3\CMS\Core\Error\AbstractExceptionHandler;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -36,7 +38,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  *
  * @author Dmitry Dulepov <dmitry.dulepov@gmail.com>
  */
-class SentryExceptionHandler extends \TYPO3\CMS\Core\Error\AbstractExceptionHandler implements SingletonInterface {
+class SentryExceptionHandler extends AbstractExceptionHandler implements SingletonInterface {
 
 	/**
 	 * Constructs this exception handler - registers itself as the default exception handler.
@@ -47,7 +49,10 @@ class SentryExceptionHandler extends \TYPO3\CMS\Core\Error\AbstractExceptionHand
 		$extConf = @unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['sentry']);
 		if ($extConf['passErrorsToTypo3']) {
 			// The code below will set up a TYPO3 exception handler
-			GeneralUtility::makeInstance($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['errors']['exceptionHandler']);
+
+			if(trim($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['errors']['exceptionHandler']) !== '') {
+				GeneralUtility::makeInstance($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['errors']['exceptionHandler']);
+			}
 
 			// We always register exception handler for Sentry, regardless of TYPO3 settings!
 			$ravenErrorHandler->registerExceptionHandler(true);
@@ -57,20 +62,20 @@ class SentryExceptionHandler extends \TYPO3\CMS\Core\Error\AbstractExceptionHand
 	/**
 	 * Formats and echoes the exception as XHTML.
 	 *
-	 * @param \Exception $exception The exception object
+	 * @param \Exception|\Throwable $exception The exception object
 	 * @return void
 	 */
-	public function echoExceptionWeb(\Exception $exception) {
+	public function echoExceptionWeb(\Throwable $exception) {
 		// Empty, not used directly
 	}
 
 	/**
 	 * Formats and echoes the exception for the command line
 	 *
-	 * @param \Exception $exception The exception object
+	 * @param \Exception|\Throwable $exception The exception object
 	 * @return void
 	 */
-	public function echoExceptionCLI(\Exception $exception) {
+	public function echoExceptionCLI(\Throwable $exception) {
 		// Empty, not used directly
 	}
 
