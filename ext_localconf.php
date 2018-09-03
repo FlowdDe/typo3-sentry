@@ -10,7 +10,7 @@ defined('TYPO3_MODE') or die();
         $GLOBALS['SENTRY_CLIENT'] = new Raven_Client($extConf['sentryDSN']);
         $ravenErrorHandler = new Raven_ErrorHandler($GLOBALS['SENTRY_CLIENT']);
 
-        $errorMask = E_ALL & ~(E_DEPRECATED | E_NOTICE | E_STRICT);
+        $errorMask = $GLOBALS['TYPO3_CONF_VARS']['SYS']['errorHandlerErrors'];
 
         // Register handlers in case if we do not have to report to TYPO3. Otherwise we need to register those handlers first!
         if(!$extConf['passErrorsToTypo3']) {
