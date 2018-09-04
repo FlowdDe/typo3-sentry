@@ -45,7 +45,7 @@ class SentryExceptionHandler extends AbstractExceptionHandler implements Singlet
 	 *
 	 * @param \Raven_ErrorHandler $ravenErrorHandler Note: must accept NULL because of compatiblity with the interface
 	 */
-	public function __construct(\Raven_ErrorHandler $ravenErrorHandler = NULL) {
+	public function __construct(\Raven_ErrorHandler $ravenErrorHandler = null) {
 		$extConf = @unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['sentry']);
 		if ($extConf['passErrorsToTypo3']) {
 			// The code below will set up a TYPO3 exception handler
@@ -54,8 +54,10 @@ class SentryExceptionHandler extends AbstractExceptionHandler implements Singlet
 				GeneralUtility::makeInstance($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['errors']['exceptionHandler']);
 			}
 
-			// We always register exception handler for Sentry, regardless of TYPO3 settings!
-			$ravenErrorHandler->registerExceptionHandler(true);
+			if ($ravenErrorHandler !== null) {
+				// We always register exception handler for Sentry, regardless of TYPO3 settings!
+				$ravenErrorHandler->registerExceptionHandler(true);
+			}
 		}
 	}
 

@@ -50,13 +50,15 @@ class SentryErrorHandler implements ErrorHandlerInterface, SingletonInterface {
 	 * @param integer $errorHandlerErrors The integer representing the E_* error level which should be
 	 * @param \Raven_ErrorHandler $ravenErrorHandler Note: must be last to ensure interface compatibility!
 	 */
-	public function __construct($errorHandlerErrors, \Raven_ErrorHandler $ravenErrorHandler = NULL) {
+	public function __construct($errorHandlerErrors, \Raven_ErrorHandler $ravenErrorHandler = null) {
 		$extConf = @unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['sentry']);
 		if ($extConf['passErrorsToTypo3']) {
 			// The code below will set up a TYPO3 error handler
 			$this->typo3ErrorHandler = GeneralUtility::makeInstance($GLOBALS['TYPO3_CONF_VARS']['SYS']['errorHandler'], $errorHandlerErrors);
 
-			$ravenErrorHandler->registerErrorHandler(true, $errorHandlerErrors);
+			if ($ravenErrorHandler !== null) {
+				$ravenErrorHandler->registerErrorHandler(true, $errorHandlerErrors);
+			}
 		}
 	}
 
