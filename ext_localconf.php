@@ -26,6 +26,11 @@ defined('TYPO3_MODE') or die();
             \DmitryDulepov\Sentry\ErrorHandlers\SentryExceptionHandlerFrontend::initialize($ravenErrorHandler);
         }
 
+        if (empty($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_div.php']['systemLog'])) {
+            $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_div.php']['systemLog'] = [];
+        }
+        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_div.php']['systemLog']['tx_sentry'] =  \DmitryDulepov\Sentry\ErrorHandlers\SysLogHandler::class . '->sysLog';
+
         // Register test plugin
         if(is_array($extConf) && isset($extConf['enableTestPlugin']) && $extConf['enableTestPlugin']) {
             \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin('DmitryDulepov.sentry', 'ErrorHandlerTest', array('ErrorHandlerTest' => 'index,phpWarning,phpError,phpException'), array('ErrorHandlerTest' => 'index,phpWarning,phpError,phpException'));
